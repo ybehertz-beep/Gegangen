@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gegangen — Community Rideshare</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --navy: #1B2A4A;
+    --navy-light: #2C3F63;
+    --gold: #C9973F;
+    --gold-light: #E0B565;
+    --cream: #F7F4ED;
+    --cream-dark: #EDE7D9;
+    --green: #3D5C46;
+    --ink: #1B2A4A;
+    --danger: #A54A3F;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, .display {
+    font-family: 'Fraunces', serif;
+  }
+
+  header {
+    background: var(--navy);
+    color: var(--cream);
+    padding: 28px 20px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .header-inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  header h1 {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  header h1 svg {
+    width: 46px;
+    height: 23px;
+    flex-shrink: 0;
+  }
+
+  header p {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #C7CEDE;
+    max-width: 46ch;
+  }
+
+  .tabs {
+    max-width: 640px;
+    margin: -22px auto 0;
+    padding: 0 20px;
+    display: flex;
+    gap: 8px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .tab {
+    flex: 1;
+    background: var(--cream);
+    border: 1px solid var(--cream-dark);
+    padding: 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(27,42,74,0.08);
+    transition: all 0.15s ease;
+  }
+
+  .tab.active {
+    background: var(--navy);
+    color: var(--cream);
+    border-color: var(--navy);
+  }
+
+  main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(27,42,74,0.08);
+    border: 1px solid var(--cream-dark);
+  }
+
+  .card + .card { margin-top: 14px; }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    margin-top: 14px;
+    color: var(--navy-light);
+  }
+
+  label:first-child { margin-top: 0; }
+
+  input, select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: white;
+  }
+
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  button.primary {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    background: var(--navy);
+    color: var(--cream);
+    border: none;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  button.primary:hover { background: var(--navy-light); }
+
+  button.ghost {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    background: transparent;
+    color: var(--navy-light);
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .charity-note {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: rgba(61,92,70,0.08);
+    border-left: 3px solid var(--green);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--green);
+    line-height: 1.5;
+  }
+
+  /* Ride card with route visual */
+  .ride {
+    position: relative;
+    padding-left: 4px;
+  }
+
+  .route {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .route .pt {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--navy);
+  }
+
+  .route .line {
+    flex: 1;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--gold) 0 6px, transparent 6px 11px);
+    position: relative;
+  }
+
+  .route .line::after {
+    content: '→';
+    position: absolute;
+    right: -2px;
+    top: -11px;
+    color: var(--gold);
+    font-size: 16px;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .pill {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: var(--cream-dark);
+    color: var(--navy-light);
+  }
+
+  .pill.gender { background: #E8DFF0; color: #5B3C7A; }
+
+  .contact {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .contact a {
+    color: var(--navy);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 15px;
+  }
+
+  .contact .label {
+    font-size: 12px;
+    color: var(--navy-light);
+  }
+
+  .empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: #8A93A8;
+  }
+
+  .empty .display {
+    font-size: 20px;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--navy);
+    color: var(--cream);
+    padding: 13px 22px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    transition: transform 0.25s ease;
+    z-index: 10;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .loading { text-align:center; padding: 30px; color: #8A93A8; font-size: 14px; }
+
+  .loc-field {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .loc-field input { flex: 1; }
+
+  .map-btn {
+    flex-shrink: 0;
+    background: var(--navy);
+    color: var(--cream);
+    border: none;
+    border-radius: 8px;
+    padding: 0 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .map-btn:hover { background: var(--navy-light); }
+  .map-btn.picked { background: var(--green); }
+
+  .radius-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--navy-light);
+  }
+
+  .radius-row select { width: auto; padding: 8px 10px; }
+
+  .map-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(27,42,74,0.55);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .map-modal.open { display: flex; }
+
+  .map-modal-inner {
+    background: white;
+    width: 100%;
+    max-width: 640px;
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+    max-height: 88vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .map-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--navy);
+    color: var(--cream);
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .map-modal-header button {
+    background: none;
+    border: none;
+    color: var(--cream);
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  #picker-map {
+    height: 340px;
+    width: 100%;
+  }
+
+  .map-modal-footer {
+    padding: 14px 16px 18px;
+    border-top: 1px solid var(--cream-dark);
+  }
+
+  #picker-coords-label {
+    font-size: 13px;
+    color: var(--navy-light);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  @media (max-width: 400px) {
+    .row2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>
+      <svg viewBox="0 0 48 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 15.5C4 14.4 4.9 13.5 6 13.5H8.5L11.5 8.5C12 7.6 12.9 7 13.9 7H27C28.3 7 29.5 7.7 30.2 8.8L33 13.5H41C42.7 13.5 44 14.8 44 16.5V17.5C44 18.3 43.3 19 42.5 19H40" stroke="#C9973F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 15.5V17C4 18.1 4.9 19 6 19H8" stroke="#C9973F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M17.5 19H30.5" stroke="#C9973F" stroke-width="1.7" stroke-linecap="round"/>
+        <path d="M12 13.5H35" stroke="#C9973F" stroke-width="1.7" stroke-linecap="round"/>
+        <circle cx="13" cy="19" r="4" fill="#C9973F"/>
+        <circle cx="13" cy="19" r="1.5" fill="#1B2A4A"/>
+        <circle cx="35" cy="19" r="4" fill="#C9973F"/>
+        <circle cx="35" cy="19" r="1.5" fill="#1B2A4A"/>
+      </svg>
+      Gegangen
+    </h1>
+    <p>Rideshare for the frum community across the tristate area — every ride gives back to Keren Hatzedaka.</p>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-tab="find">Find a Ride</div>
+  <div class="tab" data-tab="post">Post a Ride</div>
+</div>
+
+<main>
+
+  <div class="panel active" id="panel-find">
+    <div class="card">
+      <div class="section-label">Search</div>
+      <label for="s-from">Leaving from</label>
+      <div class="loc-field">
+        <input id="s-from" type="text" placeholder="Pin a location or type it">
+        <input type="hidden" id="s-from-lat">
+        <input type="hidden" id="s-from-lng">
+        <button type="button" class="map-btn" id="s-from-map-btn">📍 Pin</button>
+      </div>
+      <div class="row2">
+        <div>
+          <label for="s-to">Going to</label>
+          <div class="loc-field">
+            <input id="s-to" type="text" placeholder="Pin a location or type it">
+            <input type="hidden" id="s-to-lat">
+            <input type="hidden" id="s-to-lng">
+            <button type="button" class="map-btn" id="s-to-map-btn">📍 Pin</button>
+          </div>
+        </div>
+        <div>
+          <label for="s-date">Date</label>
+          <input id="s-date" type="date">
+        </div>
+      </div>
+      <div class="radius-row">
+        <span>Radius for pinned locations:</span>
+        <select id="s-radius">
+          <option value="10">10 miles</option>
+          <option value="20">20 miles</option>
+          <option value="40">40 miles</option>
+        </select>
+      </div>
+      <label for="s-time">Around what time? (optional)</label>
+      <input id="s-time" type="time">
+      <div style="font-size:12px;color:#8A93A8;margin-top:5px;">Shows rides within 3 hours of this time.</div>
+      <button class="primary" id="search-btn">Search rides</button>
+      <button class="ghost" id="clear-btn">Show all rides</button>
+    </div>
+
+    <div id="results" style="margin-top:18px;">
+      <div class="loading">Loading rides…</div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-post">
+    <div class="card">
+      <div class="section-label">Ride details</div>
+      <label for="p-from">Leaving from</label>
+      <div class="loc-field">
+        <input id="p-from" type="text" placeholder="Pin a location or type it">
+        <input type="hidden" id="p-from-lat">
+        <input type="hidden" id="p-from-lng">
+        <button type="button" class="map-btn" id="p-from-map-btn">📍 Pin</button>
+      </div>
+      <label for="p-to">Going to</label>
+      <div class="loc-field">
+        <input id="p-to" type="text" placeholder="Pin a location or type it">
+        <input type="hidden" id="p-to-lat">
+        <input type="hidden" id="p-to-lng">
+        <button type="button" class="map-btn" id="p-to-map-btn">📍 Pin</button>
+      </div>
+      <div class="row2">
+        <div>
+          <label for="p-date">Date</label>
+          <input id="p-date" type="date">
+        </div>
+        <div>
+          <label for="p-time">Time</label>
+          <input id="p-time" type="time">
+        </div>
+      </div>
+      <label for="p-gender">You are</label>
+      <select id="p-gender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+      <label for="p-looking">Looking for</label>
+      <select id="p-looking">
+        <option value="Male">Male passenger(s)</option>
+        <option value="Female">Female passenger(s)</option>
+        <option value="Any">Anyone</option>
+      </select>
+      <label for="p-gas">Gas contribution</label>
+      <select id="p-gas">
+        <option value="Welcome, not required">Welcome, not required</option>
+        <option value="Requested">Requested</option>
+        <option value="Not needed">Not needed</option>
+      </select>
+      <label for="p-phone">Your phone number</label>
+      <input id="p-phone" type="tel" placeholder="e.g. 732-555-0123">
+      <label for="p-name">Your name (optional)</label>
+      <input id="p-name" type="text" placeholder="First name is fine">
+
+      <div class="charity-note">
+        🤍 A portion of every completed ride is donated to <strong>Keren Hatzedaka</strong> — arranged directly between rider and driver.
+      </div>
+
+      <button class="primary" id="post-btn">Post this ride</button>
+    </div>
+  </div>
+
+</main>
+
+<div class="map-modal" id="map-modal">
+  <div class="map-modal-inner">
+    <div class="map-modal-header">
+      <span id="map-modal-title">Choose a location</span>
+      <button type="button" id="map-modal-close">✕</button>
+    </div>
+    <div id="picker-map"></div>
+    <div class="map-modal-footer">
+      <div id="picker-coords-label">Tap the map to drop a pin</div>
+      <button class="primary" id="map-modal-confirm" disabled>Use this location</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const panels = { find: document.getElementById('panel-find'), post: document.getElementById('panel-post') };
+
+  // ---- Distance math ----
+  function haversineMiles(lat1, lon1, lat2, lon2) {
+    const R = 3958.8; // Earth radius in miles
+    const toRad = d => d * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  // ---- Map picker modal ----
+  let pickerMap = null;
+  let pickerMarker = null;
+  let currentPickerTarget = null;
+  let pendingCoords = null;
+
+  function clearFieldCoords(fieldId) {
+    const lat = document.getElementById(fieldId + '-lat');
+    const lng = document.getElementById(fieldId + '-lng');
+    if (lat) lat.value = '';
+    if (lng) lng.value = '';
+    const btn = document.getElementById(fieldId + '-map-btn');
+    if (btn) { btn.classList.remove('picked'); btn.textContent = '📍 Pin'; }
+  }
+
+  // If someone edits the text manually after pinning, the pin is no longer trustworthy for radius search.
+  ['s-from', 's-to', 'p-from', 'p-to'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => clearFieldCoords(id));
+  });
+
+  function openMapPicker(target, title) {
+    currentPickerTarget = target;
+    pendingCoords = null;
+    document.getElementById('map-modal-title').textContent = title;
+    document.getElementById('map-modal').classList.add('open');
+    document.getElementById('map-modal-confirm').disabled = true;
+    document.getElementById('picker-coords-label').textContent = 'Tap the map to drop a pin';
+
+    setTimeout(() => {
+      if (!pickerMap && window.L) {
+        pickerMap = L.map('picker-map').setView([40.75, -74.0], 9); // tristate area default
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+          maxZoom: 18
+        }).addTo(pickerMap);
+        pickerMap.on('click', onPickerMapClick);
+      } else if (pickerMap) {
+        pickerMap.invalidateSize();
+      }
+      if (pickerMarker && pickerMap) {
+        pickerMap.removeLayer(pickerMarker);
+        pickerMarker = null;
+      }
+    }, 60);
+  }
+
+  function onPickerMapClick(e) {
+    const { lat, lng } = e.latlng;
+    if (pickerMarker) pickerMap.removeLayer(pickerMarker);
+    pickerMarker = L.marker([lat, lng]).addTo(pickerMap);
+    pendingCoords = { lat, lng };
+    document.getElementById('picker-coords-label').textContent = `Pinned: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    document.getElementById('map-modal-confirm').disabled = false;
+  }
+
+  async function reverseGeocodeLabel(lat, lng) {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=13`);
+      const data = await res.json();
+      const addr = (data && data.address) || {};
+      const place = addr.city || addr.town || addr.village || addr.hamlet || addr.suburb || addr.neighbourhood;
+      const state = addr.state;
+      const parts = [place, state].filter(Boolean);
+      if (parts.length) return parts.join(', ');
+    } catch (e) { /* fall through to coordinate label */ }
+    return `Pinned location (${lat.toFixed(3)}, ${lng.toFixed(3)})`;
+  }
+
+  document.getElementById('map-modal-confirm').addEventListener('click', async () => {
+    if (!pendingCoords || !currentPickerTarget) return;
+    const { lat, lng } = pendingCoords;
+    const target = currentPickerTarget;
+
+    document.getElementById(target + '-lat').value = lat;
+    document.getElementById(target + '-lng').value = lng;
+    document.getElementById('map-modal').classList.remove('open');
+
+    const btn = document.getElementById(target + '-map-btn');
+    if (btn) { btn.classList.add('picked'); btn.textContent = '📍 Pinned'; }
+    document.getElementById(target).value = 'Locating…';
+
+    const label = await reverseGeocodeLabel(lat, lng);
+    // Only overwrite if the user hasn't since cleared/changed the pin
+    if (document.getElementById(target + '-lat').value !== '') {
+      document.getElementById(target).value = label;
+    }
+  });
+
+  document.getElementById('map-modal-close').addEventListener('click', () => {
+    document.getElementById('map-modal').classList.remove('open');
+  });
+
+  document.getElementById('s-from-map-btn').addEventListener('click', () => openMapPicker('s-from', 'Where are you leaving from?'));
+  document.getElementById('s-to-map-btn').addEventListener('click', () => openMapPicker('s-to', 'Where are you headed?'));
+  document.getElementById('p-from-map-btn').addEventListener('click', () => openMapPicker('p-from', 'Where are you leaving from?'));
+  document.getElementById('p-to-map-btn').addEventListener('click', () => openMapPicker('p-to', 'Where are you headed?'));
+
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      Object.values(panels).forEach(p => p.classList.remove('active'));
+      panels[tab.dataset.tab].classList.add('active');
+      if (tab.dataset.tab === 'find') loadRides();
+    });
+  });
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2600);
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+
+  function formatTime(timeStr) {
+    if (!timeStr) return '';
+    const [h, m] = timeStr.split(':');
+    const hour = parseInt(h);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 === 0 ? 12 : hour % 12;
+    return `${displayHour}:${m} ${ampm}`;
+  }
+
+  // ---- Firebase Realtime Database (shared, no-login storage) ----
+  const firebaseConfig = {
+    apiKey: "AIzaSyDjKS6n3VPrx_vseKZLnB4fCyWYJkUyBT4",
+    authDomain: "gegangen-f70eb.firebaseapp.com",
+    databaseURL: "https://gegangen-f70eb-default-rtdb.firebaseio.com",
+    projectId: "gegangen-f70eb",
+    storageBucket: "gegangen-f70eb.firebasestorage.app",
+    messagingSenderId: "263402029290",
+    appId: "1:263402029290:web:2b4f683ab63bdbbd681793"
+  };
+
+  // In-memory fallback in case Firebase fails to load (e.g. this preview's
+  // sandbox blocks the script) so the app still doesn't crash outright.
+  const memoryStore = {};
+  let usingFallback = false;
+  let db = null;
+
+  try {
+    if (window.firebase) {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+    } else {
+      usingFallback = true;
+    }
+  } catch (e) {
+    usingFallback = true;
+  }
+
+  const storageLayer = {
+    async set(key, value, shared) {
+      if (db && !usingFallback) {
+        try {
+          await db.ref('rides/' + key).set(value);
+          return { key, value, shared };
+        } catch (e) {
+          usingFallback = true;
+        }
+      }
+      memoryStore[key] = value;
+      return { key, value, shared };
+    },
+    async get(key, shared) {
+      if (db && !usingFallback) {
+        try {
+          const snap = await db.ref('rides/' + key).get();
+          if (!snap.exists()) throw new Error('not found');
+          return { key, value: snap.val(), shared };
+        } catch (e) {
+          if (memoryStore[key] !== undefined) return { key, value: memoryStore[key], shared };
+          throw e;
+        }
+      }
+      if (memoryStore[key] === undefined) throw new Error('not found');
+      return { key, value: memoryStore[key], shared };
+    },
+    async list(prefix, shared) {
+      if (db && !usingFallback) {
+        try {
+          const snap = await db.ref('rides').get();
+          const keys = [];
+          if (snap.exists()) snap.forEach(child => keys.push(child.key));
+          return { keys, prefix, shared };
+        } catch (e) {
+          usingFallback = true;
+        }
+      }
+      const keys = Object.keys(memoryStore).filter(k => !prefix || k.startsWith(prefix));
+      return { keys, prefix, shared };
+    }
+  };
+
+  // Normalizes location text so common spelling/number variations match:
+  // "Five Towns" <-> "5 Towns", "Boro Park" <-> "Borough Park", etc.
+  const NUMBER_WORDS = { one:'1', two:'2', three:'3', four:'4', five:'5', six:'6', seven:'7', eight:'8', nine:'9', ten:'10' };
+  const LOCATION_ALIASES = [
+    [/\bboro\s*park\b/g, 'borough park'],
+    [/\bwilly\b/g, 'williamsburg'],
+    [/\bwmsbg\b/g, 'williamsburg'],
+    [/\bft\.?\s*lee\b/g, 'fort lee'],
+    [/\bcrown\s*hts\b/g, 'crown heights'],
+    [/\blkwd\b/g, 'lakewood'],
+    [/\bbklyn\b/g, 'brooklyn'],
+    [/\bmonsey\s*ny\b/g, 'monsey'],
+  ];
+
+  function normalizeLocation(str) {
+    if (!str) return '';
+    let s = str.toLowerCase().trim();
+    s = s.replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten)\b/g, w => NUMBER_WORDS[w]);
+    s = s.replace(/[.,]/g, '');
+    s = s.replace(/\s+/g, ' ');
+    LOCATION_ALIASES.forEach(([pattern, replacement]) => {
+      s = s.replace(pattern, replacement);
+    });
+    return s;
+  }
+
+  function locationsMatch(rideValue, searchValue) {
+    if (!searchValue) return true;
+    return normalizeLocation(rideValue).includes(normalizeLocation(searchValue));
+  }
+
+  // Prefer real distance matching when both the ride and the search have a pinned
+  // location; otherwise fall back to normalized text matching.
+  function coordsMatch(rideLat, rideLng, searchLat, searchLng, radius, rideText, searchText) {
+    const hasSearchPin = searchLat != null && searchLng != null && !isNaN(searchLat) && !isNaN(searchLng);
+    const hasRidePin = rideLat != null && rideLng != null && !isNaN(rideLat) && !isNaN(rideLng);
+    if (hasSearchPin && hasRidePin) {
+      return haversineMiles(rideLat, rideLng, searchLat, searchLng) <= radius;
+    }
+    return locationsMatch(rideText, searchText);
+  }
+
+  async function loadRides(filter) {
+    const results = document.getElementById('results');
+    results.innerHTML = '<div class="loading">Loading rides…</div>';
+    try {
+      const list = await storageLayer.list('ride:', true);
+      let rides = [];
+      if (list && list.keys && list.keys.length) {
+        for (const key of list.keys) {
+          try {
+            const res = await storageLayer.get(key, true);
+            if (res && res.value) rides.push(JSON.parse(res.value));
+          } catch (e) { /* skip missing */ }
+        }
+      }
+
+      rides.sort((a, b) => {
+        const da = new Date(`${a.date}T${a.time || '00:00'}`);
+        const db = new Date(`${b.date}T${b.time || '00:00'}`);
+        return da - db;
+      });
+
+      if (filter) {
+        const WINDOW_MINUTES = 180; // "within a few hours"
+        rides = rides.filter(r => {
+          const matchFrom = coordsMatch(r.fromLat, r.fromLng, filter.fromLat, filter.fromLng, filter.radius, r.from, filter.from);
+          const matchTo = coordsMatch(r.toLat, r.toLng, filter.toLat, filter.toLng, filter.radius, r.to, filter.to);
+          const matchDate = !filter.date || r.date === filter.date;
+
+          let matchTime = true;
+          if (filter.time && r.time) {
+            const toMinutes = (t) => {
+              const [h, m] = t.split(':').map(Number);
+              return h * 60 + m;
+            };
+            const diff = Math.abs(toMinutes(r.time) - toMinutes(filter.time));
+            matchTime = diff <= WINDOW_MINUTES;
+          }
+
+          return matchFrom && matchTo && matchDate && matchTime;
+        });
+      }
+
+      if (!rides.length) {
+        results.innerHTML = `
+          <div class="empty">
+            <div class="display">No rides here yet</div>
+            <div>Be the first — post a ride to get things moving.</div>
+          </div>`;
+        return;
+      }
+
+      results.innerHTML = rides.map(r => `
+        <div class="card ride">
+          <div class="route">
+            <span class="pt">${escapeHtml(r.from)}</span>
+            <span class="line"></span>
+            <span class="pt">${escapeHtml(r.to)}</span>
+          </div>
+          <div style="font-size:14px;color:#5A6480;">${formatDate(r.date)} · ${formatTime(r.time)}</div>
+          <div class="meta-row">
+            <span class="pill gender">${escapeHtml(r.gender)} driver</span>
+            <span class="pill gender">Looking for ${escapeHtml(r.looking)}</span>
+            <span class="pill">Gas: ${escapeHtml(r.gas)}</span>
+          </div>
+          <div class="contact">
+            <div>
+              <div class="label">Contact${r.name ? ' ' + escapeHtml(r.name) : ''}</div>
+              <a href="tel:${escapeHtml(r.phone)}">${escapeHtml(r.phone)}</a>
+            </div>
+            <a href="https://wa.me/${escapeHtml(r.phone.replace(/\D/g,''))}" target="_blank" style="font-size:13px;color:var(--green);font-weight:700;">WhatsApp →</a>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      results.innerHTML = '<div class="empty">Couldn\'t load rides. Try again in a moment.</div>';
+    }
+  }
+
+  document.getElementById('search-btn').addEventListener('click', () => {
+    const parseNum = v => (v === '' || v == null) ? null : parseFloat(v);
+    loadRides({
+      from: document.getElementById('s-from').value,
+      to: document.getElementById('s-to').value,
+      fromLat: parseNum(document.getElementById('s-from-lat').value),
+      fromLng: parseNum(document.getElementById('s-from-lng').value),
+      toLat: parseNum(document.getElementById('s-to-lat').value),
+      toLng: parseNum(document.getElementById('s-to-lng').value),
+      radius: parseFloat(document.getElementById('s-radius').value),
+      date: document.getElementById('s-date').value,
+      time: document.getElementById('s-time').value
+    });
+  });
+
+  document.getElementById('clear-btn').addEventListener('click', () => {
+    document.getElementById('s-from').value = '';
+    document.getElementById('s-to').value = '';
+    document.getElementById('s-date').value = '';
+    document.getElementById('s-time').value = '';
+    clearFieldCoords('s-from');
+    clearFieldCoords('s-to');
+    loadRides();
+  });
+
+  document.getElementById('post-btn').addEventListener('click', async () => {
+    const from = document.getElementById('p-from').value.trim();
+    const to = document.getElementById('p-to').value.trim();
+    const date = document.getElementById('p-date').value;
+    const time = document.getElementById('p-time').value;
+    const phone = document.getElementById('p-phone').value.trim();
+
+    if (!from || !to || !date || !time || !phone) {
+      showToast('Please fill in from, to, date, time, and phone.');
+      return;
+    }
+
+    const parseNum = v => (v === '' || v == null) ? null : parseFloat(v);
+    const ride = {
+      from, to, date, time, phone,
+      fromLat: parseNum(document.getElementById('p-from-lat').value),
+      fromLng: parseNum(document.getElementById('p-from-lng').value),
+      toLat: parseNum(document.getElementById('p-to-lat').value),
+      toLng: parseNum(document.getElementById('p-to-lng').value),
+      gender: document.getElementById('p-gender').value,
+      looking: document.getElementById('p-looking').value,
+      gas: document.getElementById('p-gas').value,
+      name: document.getElementById('p-name').value.trim(),
+      created: Date.now()
+    };
+
+    const key = 'ride:' + ride.created + '-' + Math.random().toString(36).slice(2, 8);
+
+    try {
+      const result = await storageLayer.set(key, JSON.stringify(ride), true);
+      if (!result) throw new Error('save failed');
+      showToast(usingFallback ? 'Ride posted (this session only) 🙌' : 'Ride posted! 🙌');
+      ['p-from','p-to','p-date','p-time','p-phone','p-name'].forEach(id => document.getElementById(id).value = '');
+      clearFieldCoords('p-from');
+      clearFieldCoords('p-to');
+      document.getElementById('p-gender').value = 'Male';
+      document.getElementById('p-looking').value = 'Male';
+      document.getElementById('p-gas').value = 'Welcome, not required';
+      tabs.forEach(t => t.classList.remove('active'));
+      document.querySelector('[data-tab="find"]').classList.add('active');
+      panels.post.classList.remove('active');
+      panels.find.classList.add('active');
+      loadRides();
+    } catch (e) {
+      showToast('Something went wrong saving your ride. Try again.');
+    }
+  });
+
+  loadRides();
+</script>
+
+</body>
+</html>
+
