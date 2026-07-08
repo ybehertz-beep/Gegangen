@@ -802,7 +802,7 @@
     async get(key, shared) {
       if (db && !usingFallback) {
         try {
-          const snap = await db.ref('rides/' + key).get();
+          const snap = await db.ref('rides/' + key).once('value');
           if (!snap.exists()) throw new Error('not found');
           return { key, value: snap.val(), shared };
         } catch (e) {
@@ -816,7 +816,7 @@
     async list(prefix, shared) {
       if (db && !usingFallback) {
         try {
-          const snap = await db.ref('rides').get();
+          const snap = await db.ref('rides').once('value');
           const keys = [];
           if (snap.exists()) snap.forEach(child => keys.push(child.key));
           return { keys, prefix, shared };
@@ -1045,4 +1045,5 @@
 </script>
 
 </body>
-  </html>
+</html>
+
