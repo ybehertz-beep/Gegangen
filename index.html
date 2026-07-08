@@ -929,13 +929,15 @@
         });
       }
 
+      const debugHtml = `<div style="font-size:11px;color:#8A93A8;margin-top:14px;padding:10px;background:#fff;border-radius:8px;word-break:break-all;">DEBUG (${rides.length} loaded): ${debugInfo.join(' | ')}</div>`;
+
       if (!rides.length) {
         results.innerHTML = `
           <div class="empty">
             <div class="display">No rides here yet</div>
             <div>Be the first — post a ride to get things moving.</div>
           </div>
-          <div style="font-size:11px;color:#8A93A8;margin-top:14px;padding:10px;background:#fff;border-radius:8px;word-break:break-all;">DEBUG: ${debugInfo.join(' | ')}</div>`;
+          ${debugHtml}`;
         return;
       }
 
@@ -960,7 +962,7 @@
             <a href="https://wa.me/${escapeHtml(r.phone.replace(/\D/g,''))}" target="_blank" style="font-size:13px;color:var(--green);font-weight:700;">WhatsApp →</a>
           </div>
         </div>
-      `).join('');
+      `).join('') + debugHtml;
     } catch (e) {
       results.innerHTML = '<div class="empty">Couldn\'t load rides. Try again in a moment.<br><span style="font-size:11px;">DEBUG: ' + (e && e.message ? e.message : e) + '</span></div>';
     }
