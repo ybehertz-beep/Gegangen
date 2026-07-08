@@ -10,7 +10,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
- 
+
   :root {
     --navy: #1B2A4A;
     --navy-light: #2C3F63;
@@ -22,20 +22,20 @@
     --ink: #1B2A4A;
     --danger: #A54A3F;
   }
- 
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   body {
     font-family: 'Inter', sans-serif;
     background: var(--cream);
     color: var(--ink);
     min-height: 100vh;
   }
- 
+
   h1, h2, h3, .display {
     font-family: 'Fraunces', serif;
   }
- 
+
   header {
     background: var(--navy);
     color: var(--cream);
@@ -43,7 +43,7 @@
     position: relative;
     overflow: hidden;
   }
- 
+
   header::after {
     content: '';
     position: absolute;
@@ -51,12 +51,12 @@
     height: 3px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
   }
- 
+
   .header-inner {
     max-width: 640px;
     margin: 0 auto;
   }
- 
+
   header h1 {
     font-size: 30px;
     font-weight: 600;
@@ -65,20 +65,20 @@
     align-items: center;
     gap: 10px;
   }
- 
+
   header h1 svg {
     width: 46px;
     height: 23px;
     flex-shrink: 0;
   }
- 
+
   header p {
     margin-top: 6px;
     font-size: 14px;
     color: #C7CEDE;
     max-width: 46ch;
   }
- 
+
   .tabs {
     max-width: 640px;
     margin: -22px auto 0;
@@ -88,7 +88,7 @@
     position: relative;
     z-index: 2;
   }
- 
+
   .tab {
     flex: 1;
     background: var(--cream);
@@ -102,22 +102,22 @@
     box-shadow: 0 2px 6px rgba(27,42,74,0.08);
     transition: all 0.15s ease;
   }
- 
+
   .tab.active {
     background: var(--navy);
     color: var(--cream);
     border-color: var(--navy);
   }
- 
+
   main {
     max-width: 640px;
     margin: 0 auto;
     padding: 28px 20px 80px;
   }
- 
+
   .panel { display: none; }
   .panel.active { display: block; }
- 
+
   .card {
     background: white;
     border-radius: 14px;
@@ -125,9 +125,9 @@
     box-shadow: 0 1px 3px rgba(27,42,74,0.08);
     border: 1px solid var(--cream-dark);
   }
- 
+
   .card + .card { margin-top: 14px; }
- 
+
   label {
     display: block;
     font-size: 13px;
@@ -136,9 +136,9 @@
     margin-top: 14px;
     color: var(--navy-light);
   }
- 
+
   label:first-child { margin-top: 0; }
- 
+
   input, select {
     width: 100%;
     padding: 11px 12px;
@@ -149,19 +149,19 @@
     background: var(--cream);
     color: var(--ink);
   }
- 
+
   input:focus, select:focus {
     outline: none;
     border-color: var(--gold);
     background: white;
   }
- 
+
   .row2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
- 
+
   button.primary {
     width: 100%;
     margin-top: 20px;
@@ -175,9 +175,9 @@
     cursor: pointer;
     transition: background 0.15s ease;
   }
- 
+
   button.primary:hover { background: var(--navy-light); }
- 
+
   button.ghost {
     width: 100%;
     margin-top: 10px;
@@ -190,7 +190,7 @@
     font-weight: 600;
     cursor: pointer;
   }
- 
+
   .charity-note {
     margin-top: 16px;
     padding: 12px 14px;
@@ -201,34 +201,34 @@
     color: var(--green);
     line-height: 1.5;
   }
- 
+
   /* Ride card with route visual */
   .ride {
     position: relative;
     padding-left: 4px;
   }
- 
+
   .route {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 4px;
   }
- 
+
   .route .pt {
     font-family: 'Fraunces', serif;
     font-weight: 600;
     font-size: 17px;
     color: var(--navy);
   }
- 
+
   .route .line {
     flex: 1;
     height: 2px;
     background: repeating-linear-gradient(90deg, var(--gold) 0 6px, transparent 6px 11px);
     position: relative;
   }
- 
+
   .route .line::after {
     content: '→';
     position: absolute;
@@ -237,14 +237,14 @@
     color: var(--gold);
     font-size: 16px;
   }
- 
+
   .meta-row {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 10px;
   }
- 
+
   .pill {
     font-size: 12px;
     font-weight: 600;
@@ -253,9 +253,9 @@
     background: var(--cream-dark);
     color: var(--navy-light);
   }
- 
+
   .pill.gender { background: #E8DFF0; color: #5B3C7A; }
- 
+
   .contact {
     margin-top: 14px;
     display: flex;
@@ -265,31 +265,31 @@
     border-radius: 8px;
     padding: 10px 12px;
   }
- 
+
   .contact a {
     color: var(--navy);
     font-weight: 700;
     text-decoration: none;
     font-size: 15px;
   }
- 
+
   .contact .label {
     font-size: 12px;
     color: var(--navy-light);
   }
- 
+
   .empty {
     text-align: center;
     padding: 50px 20px;
     color: #8A93A8;
   }
- 
+
   .empty .display {
     font-size: 20px;
     color: var(--navy);
     margin-bottom: 6px;
   }
- 
+
   .section-label {
     font-size: 12px;
     font-weight: 700;
@@ -298,7 +298,7 @@
     color: var(--gold);
     margin-bottom: 10px;
   }
- 
+
   .toast {
     position: fixed;
     bottom: 24px;
@@ -314,19 +314,19 @@
     transition: transform 0.25s ease;
     z-index: 10;
   }
- 
+
   .toast.show { transform: translateX(-50%) translateY(0); }
- 
+
   .loading { text-align:center; padding: 30px; color: #8A93A8; font-size: 14px; }
- 
+
   .loc-field {
     display: flex;
     gap: 8px;
     align-items: stretch;
   }
- 
+
   .loc-field input { flex: 1; }
- 
+
   .map-btn {
     flex-shrink: 0;
     background: var(--navy);
@@ -342,10 +342,10 @@
     gap: 5px;
     white-space: nowrap;
   }
- 
+
   .map-btn:hover { background: var(--navy-light); }
   .map-btn.picked { background: var(--green); }
- 
+
   .radius-row {
     display: flex;
     align-items: center;
@@ -354,9 +354,9 @@
     font-size: 13px;
     color: var(--navy-light);
   }
- 
+
   .radius-row select { width: auto; padding: 8px 10px; }
- 
+
   .map-modal {
     display: none;
     position: fixed;
@@ -366,9 +366,9 @@
     align-items: flex-end;
     justify-content: center;
   }
- 
+
   .map-modal.open { display: flex; }
- 
+
   .map-modal-inner {
     background: white;
     width: 100%;
@@ -379,7 +379,7 @@
     display: flex;
     flex-direction: column;
   }
- 
+
   .map-modal-header {
     display: flex;
     align-items: center;
@@ -390,7 +390,7 @@
     font-weight: 600;
     font-size: 15px;
   }
- 
+
   .map-modal-header button {
     background: none;
     border: none;
@@ -399,31 +399,31 @@
     cursor: pointer;
     line-height: 1;
   }
- 
+
   #picker-map {
     height: 340px;
     width: 100%;
   }
- 
+
   .map-modal-footer {
     padding: 14px 16px 18px;
     border-top: 1px solid var(--cream-dark);
   }
- 
+
   #picker-coords-label {
     font-size: 13px;
     color: var(--navy-light);
     margin-bottom: 10px;
     text-align: center;
   }
- 
+
   @media (max-width: 400px) {
     .row2 { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
- 
+
 <header>
   <div class="header-inner">
     <h1>
@@ -442,14 +442,14 @@
     <p>Rideshare for the frum community across the tristate area — every ride gives back to Keren Hatzedaka.</p>
   </div>
 </header>
- 
+
 <div class="tabs">
   <div class="tab active" data-tab="find">Find a Ride</div>
   <div class="tab" data-tab="post">Post a Ride</div>
 </div>
- 
+
 <main>
- 
+
   <div class="panel active" id="panel-find">
     <div class="card">
       <div class="section-label">Search</div>
@@ -489,12 +489,12 @@
       <button class="primary" id="search-btn">Search rides</button>
       <button class="ghost" id="clear-btn">Show all rides</button>
     </div>
- 
+
     <div id="results" style="margin-top:18px;">
       <div class="loading">Loading rides…</div>
     </div>
   </div>
- 
+
   <div class="panel" id="panel-post">
     <div class="card">
       <div class="section-label">Ride details</div>
@@ -543,17 +543,21 @@
       <input id="p-phone" type="tel" placeholder="e.g. 732-555-0123">
       <label for="p-name">Your name (optional)</label>
       <input id="p-name" type="text" placeholder="First name is fine">
- 
+
       <div class="charity-note">
         🤍 A portion of every completed ride is donated to <strong>Keren Hatzedaka</strong> — arranged directly between rider and driver.
       </div>
- 
+
       <button class="primary" id="post-btn">Post this ride</button>
     </div>
   </div>
- 
+
+  <div style="text-align:center;margin-top:24px;">
+    <a href="#" id="admin-link" style="font-size:12px;color:#B9C0CE;text-decoration:none;">Admin</a>
+  </div>
+
 </main>
- 
+
 <div class="map-modal" id="map-modal">
   <div class="map-modal-inner">
     <div class="map-modal-header">
@@ -567,22 +571,23 @@
     </div>
   </div>
 </div>
- 
+
 <div class="toast" id="toast"></div>
- 
+
 <script>
   const tabs = document.querySelectorAll('.tab');
   const panels = { find: document.getElementById('panel-find'), post: document.getElementById('panel-post') };
- 
+
   // ---- "My rides" tracking (so people can delete their own posts) ----
   const ADMIN_PASSWORD = 'Ilove613!!';
   let isAdmin = (sessionStorage.getItem('isAdmin') === '1');
- 
+  let lastFilter = null;
+
   function getMyRideKeys() {
     try { return JSON.parse(localStorage.getItem('myRideKeys') || '[]'); }
     catch (e) { return []; }
   }
- 
+
   function rememberMyRide(key) {
     try {
       const keys = getMyRideKeys();
@@ -590,14 +595,14 @@
       localStorage.setItem('myRideKeys', JSON.stringify(keys));
     } catch (e) { /* localStorage unavailable, skip silently */ }
   }
- 
+
   function forgetMyRide(key) {
     try {
       const keys = getMyRideKeys().filter(k => k !== key);
       localStorage.setItem('myRideKeys', JSON.stringify(keys));
     } catch (e) { /* ignore */ }
   }
- 
+
   async function deleteRide(key) {
     if (!confirm('Delete this ride? This cannot be undone.')) return;
     const ok = await storageLayer.delete(key);
@@ -609,7 +614,24 @@
       showToast('Could not delete. Try again.');
     }
   }
- 
+
+  document.getElementById('admin-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    if (isAdmin) {
+      showToast('Admin mode already on');
+      return;
+    }
+    const entered = prompt('Admin password:');
+    if (entered === ADMIN_PASSWORD) {
+      isAdmin = true;
+      sessionStorage.setItem('isAdmin', '1');
+      showToast('Admin mode enabled');
+      loadRides(lastFilter);
+    } else if (entered !== null) {
+      showToast('Incorrect password');
+    }
+  });
+
   // ---- Distance math ----
   function haversineMiles(lat1, lon1, lat2, lon2) {
     const R = 3958.8; // Earth radius in miles
@@ -620,13 +642,13 @@
               Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
- 
+
   // ---- Map picker modal ----
   let pickerMap = null;
   let pickerMarker = null;
   let currentPickerTarget = null;
   let pendingCoords = null;
- 
+
   function clearFieldCoords(fieldId) {
     const lat = document.getElementById(fieldId + '-lat');
     const lng = document.getElementById(fieldId + '-lng');
@@ -635,13 +657,13 @@
     const btn = document.getElementById(fieldId + '-map-btn');
     if (btn) { btn.classList.remove('picked'); btn.textContent = '📍 Pin'; }
   }
- 
+
   // If someone edits the text manually after pinning, the pin is no longer trustworthy for radius search.
   ['s-from', 's-to', 'p-from', 'p-to'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', () => clearFieldCoords(id));
   });
- 
+
   function openMapPicker(target, title) {
     currentPickerTarget = target;
     pendingCoords = null;
@@ -649,7 +671,7 @@
     document.getElementById('map-modal').classList.add('open');
     document.getElementById('map-modal-confirm').disabled = true;
     document.getElementById('picker-coords-label').textContent = 'Tap the map to drop a pin';
- 
+
     setTimeout(() => {
       if (!pickerMap && window.L) {
         pickerMap = L.map('picker-map').setView([40.75, -74.0], 9); // tristate area default
@@ -667,7 +689,7 @@
       }
     }, 60);
   }
- 
+
   function onPickerMapClick(e) {
     const { lat, lng } = e.latlng;
     if (pickerMarker) pickerMap.removeLayer(pickerMarker);
@@ -676,7 +698,7 @@
     document.getElementById('picker-coords-label').textContent = `Pinned: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
     document.getElementById('map-modal-confirm').disabled = false;
   }
- 
+
   async function reverseGeocodeLabel(lat, lng) {
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=13`);
@@ -689,37 +711,37 @@
     } catch (e) { /* fall through to coordinate label */ }
     return `Pinned location (${lat.toFixed(3)}, ${lng.toFixed(3)})`;
   }
- 
+
   document.getElementById('map-modal-confirm').addEventListener('click', async () => {
     if (!pendingCoords || !currentPickerTarget) return;
     const { lat, lng } = pendingCoords;
     const target = currentPickerTarget;
- 
+
     document.getElementById(target + '-lat').value = lat;
     document.getElementById(target + '-lng').value = lng;
     document.getElementById('map-modal').classList.remove('open');
- 
+
     const btn = document.getElementById(target + '-map-btn');
     if (btn) { btn.classList.add('picked'); btn.textContent = '📍 Pinned'; }
     document.getElementById(target).value = 'Locating…';
- 
+
     const label = await reverseGeocodeLabel(lat, lng);
     // Only overwrite if the user hasn't since cleared/changed the pin
     if (document.getElementById(target + '-lat').value !== '') {
       document.getElementById(target).value = label;
     }
   });
- 
+
   document.getElementById('map-modal-close').addEventListener('click', () => {
     document.getElementById('map-modal').classList.remove('open');
   });
- 
+
   document.getElementById('s-from-map-btn').addEventListener('click', () => openMapPicker('s-from', 'Where are you leaving from?'));
   document.getElementById('s-to-map-btn').addEventListener('click', () => openMapPicker('s-to', 'Where are you headed?'));
   document.getElementById('p-from-map-btn').addEventListener('click', () => openMapPicker('p-from', 'Where are you leaving from?'));
   document.getElementById('p-to-map-btn').addEventListener('click', () => openMapPicker('p-to', 'Where are you headed?'));
- 
- 
+
+
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       tabs.forEach(t => t.classList.remove('active'));
@@ -729,26 +751,26 @@
       if (tab.dataset.tab === 'find') loadRides();
     });
   });
- 
+
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2600);
   }
- 
+
   function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
   }
- 
+
   function formatDate(dateStr) {
     if (!dateStr) return '';
     const d = new Date(dateStr + 'T00:00:00');
     return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
   }
- 
+
   function formatTime(timeStr) {
     if (!timeStr) return '';
     const [h, m] = timeStr.split(':');
@@ -757,7 +779,7 @@
     const displayHour = hour % 12 === 0 ? 12 : hour % 12;
     return `${displayHour}:${m} ${ampm}`;
   }
- 
+
   // ---- Firebase Realtime Database (shared, no-login storage) ----
   const firebaseConfig = {
     apiKey: "AIzaSyDjKS6n3VPrx_vseKZLnB4fCyWYJkUyBT4",
@@ -768,13 +790,13 @@
     messagingSenderId: "263402029290",
     appId: "1:263402029290:web:2b4f683ab63bdbbd681793"
   };
- 
+
   // In-memory fallback in case Firebase fails to load (e.g. this preview's
   // sandbox blocks the script) so the app still doesn't crash outright.
   const memoryStore = {};
   let usingFallback = false;
   let db = null;
- 
+
   try {
     if (window.firebase) {
       firebase.initializeApp(firebaseConfig);
@@ -785,7 +807,7 @@
   } catch (e) {
     usingFallback = true;
   }
- 
+
   const storageLayer = {
     async set(key, value, shared) {
       if (db && !usingFallback) {
@@ -840,7 +862,7 @@
       return true;
     }
   };
- 
+
   // Normalizes location text so common spelling/number variations match:
   // "Five Towns" <-> "5 Towns", "Boro Park" <-> "Borough Park", etc.
   const NUMBER_WORDS = { one:'1', two:'2', three:'3', four:'4', five:'5', six:'6', seven:'7', eight:'8', nine:'9', ten:'10' };
@@ -854,7 +876,7 @@
     [/\bbklyn\b/g, 'brooklyn'],
     [/\bmonsey\s*ny\b/g, 'monsey'],
   ];
- 
+
   function normalizeLocation(str) {
     if (!str) return '';
     let s = str.toLowerCase().trim();
@@ -866,12 +888,12 @@
     });
     return s;
   }
- 
+
   function locationsMatch(rideValue, searchValue) {
     if (!searchValue) return true;
     return normalizeLocation(rideValue).includes(normalizeLocation(searchValue));
   }
- 
+
   // Prefer real distance matching when both the ride and the search have a pinned
   // location; otherwise fall back to normalized text matching.
   function coordsMatch(rideLat, rideLng, searchLat, searchLng, radius, rideText, searchText) {
@@ -882,39 +904,39 @@
     }
     return locationsMatch(rideText, searchText);
   }
- 
+
   async function loadRides(filter) {
     const results = document.getElementById('results');
     results.innerHTML = '<div class="loading">Loading rides…</div>';
-    const debugInfo = [];
     try {
       const list = await storageLayer.list('ride:', true);
-      debugInfo.push(`usingFallback=${usingFallback}, keysFound=${list && list.keys ? list.keys.length : 'none'}`);
       let rides = [];
       if (list && list.keys && list.keys.length) {
         for (const key of list.keys) {
           try {
             const res = await storageLayer.get(key, true);
-            if (res && res.value) rides.push(JSON.parse(res.value));
-          } catch (e) {
-            debugInfo.push(`Key "${key}" failed: ${e.message}`);
-          }
+            if (res && res.value) {
+              const ride = JSON.parse(res.value);
+              ride._key = key;
+              rides.push(ride);
+            }
+          } catch (e) { /* skip missing */ }
         }
       }
- 
+
       rides.sort((a, b) => {
         const da = new Date(`${a.date}T${a.time || '00:00'}`);
-        const db = new Date(`${b.date}T${b.time || '00:00'}`);
-        return da - db;
+        const dbb = new Date(`${b.date}T${b.time || '00:00'}`);
+        return da - dbb;
       });
- 
+
       if (filter) {
         const WINDOW_MINUTES = 180; // "within a few hours"
         rides = rides.filter(r => {
           const matchFrom = coordsMatch(r.fromLat, r.fromLng, filter.fromLat, filter.fromLng, filter.radius, r.from, filter.from);
           const matchTo = coordsMatch(r.toLat, r.toLng, filter.toLat, filter.toLng, filter.radius, r.to, filter.to);
           const matchDate = !filter.date || r.date === filter.date;
- 
+
           let matchTime = true;
           if (filter.time && r.time) {
             const toMinutes = (t) => {
@@ -924,24 +946,27 @@
             const diff = Math.abs(toMinutes(r.time) - toMinutes(filter.time));
             matchTime = diff <= WINDOW_MINUTES;
           }
- 
+
           return matchFrom && matchTo && matchDate && matchTime;
         });
       }
- 
-      const debugHtml = `<div style="font-size:11px;color:#8A93A8;margin-top:14px;padding:10px;background:#fff;border-radius:8px;word-break:break-all;">DEBUG (${rides.length} loaded): ${debugInfo.join(' | ')}</div>`;
- 
+
+      lastFilter = filter;
+
       if (!rides.length) {
         results.innerHTML = `
           <div class="empty">
             <div class="display">No rides here yet</div>
             <div>Be the first — post a ride to get things moving.</div>
-          </div>
-          ${debugHtml}`;
+          </div>`;
         return;
       }
- 
-      results.innerHTML = rides.map(r => `
+
+      const myKeys = getMyRideKeys();
+
+      results.innerHTML = rides.map(r => {
+        const canDelete = isAdmin || myKeys.includes(r._key);
+        return `
         <div class="card ride">
           <div class="route">
             <span class="pt">${escapeHtml(r.from)}</span>
@@ -961,13 +986,19 @@
             </div>
             <a href="https://wa.me/${escapeHtml(r.phone.replace(/\D/g,''))}" target="_blank" style="font-size:13px;color:var(--green);font-weight:700;">WhatsApp →</a>
           </div>
+          ${canDelete ? `<button type="button" class="delete-ride-btn" data-key="${escapeHtml(r._key)}" style="margin-top:10px;width:100%;padding:9px;background:transparent;color:var(--danger);border:1.5px solid var(--danger);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Delete this ride</button>` : ''}
         </div>
-      `).join('') + debugHtml;
+      `;
+      }).join('');
+
+      document.querySelectorAll('.delete-ride-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteRide(btn.dataset.key));
+      });
     } catch (e) {
-      results.innerHTML = '<div class="empty">Couldn\'t load rides. Try again in a moment.<br><span style="font-size:11px;">DEBUG: ' + (e && e.message ? e.message : e) + '</span></div>';
+      results.innerHTML = '<div class="empty">Couldn\'t load rides. Try again in a moment.</div>';
     }
   }
- 
+
   document.getElementById('search-btn').addEventListener('click', () => {
     const parseNum = v => (v === '' || v == null) ? null : parseFloat(v);
     loadRides({
@@ -982,7 +1013,7 @@
       time: document.getElementById('s-time').value
     });
   });
- 
+
   document.getElementById('clear-btn').addEventListener('click', () => {
     document.getElementById('s-from').value = '';
     document.getElementById('s-to').value = '';
@@ -992,19 +1023,19 @@
     clearFieldCoords('s-to');
     loadRides();
   });
- 
+
   document.getElementById('post-btn').addEventListener('click', async () => {
     const from = document.getElementById('p-from').value.trim();
     const to = document.getElementById('p-to').value.trim();
     const date = document.getElementById('p-date').value;
     const time = document.getElementById('p-time').value;
     const phone = document.getElementById('p-phone').value.trim();
- 
+
     if (!from || !to || !date || !time || !phone) {
       showToast('Please fill in from, to, date, time, and phone.');
       return;
     }
- 
+
     const parseNum = v => (v === '' || v == null) ? null : parseFloat(v);
     const ride = {
       from, to, date, time, phone,
@@ -1018,12 +1049,13 @@
       name: document.getElementById('p-name').value.trim(),
       created: Date.now()
     };
- 
+
     const key = 'ride:' + ride.created + '-' + Math.random().toString(36).slice(2, 8);
- 
+
     try {
       const result = await storageLayer.set(key, JSON.stringify(ride), true);
       if (!result) throw new Error('save failed');
+      rememberMyRide(key);
       showToast(usingFallback ? 'Ride posted (this session only) 🙌' : 'Ride posted! 🙌');
       ['p-from','p-to','p-date','p-time','p-phone','p-name'].forEach(id => document.getElementById(id).value = '');
       clearFieldCoords('p-from');
@@ -1040,10 +1072,9 @@
       showToast('Something went wrong saving your ride. Try again.');
     }
   });
- 
+
   loadRides();
 </script>
- 
+
 </body>
 </html>
- 
